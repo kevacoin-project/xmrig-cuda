@@ -46,7 +46,7 @@ public:
 
     constexpr inline Algorithm::Id base() const  { static_assert(ALGO > Algorithm::INVALID && ALGO < Algorithm::RX_0, "invalid CRYPTONIGHT algorithm"); return Algorithm::CN_2; }
     constexpr inline bool isHeavy() const        { return memory() == CN_MEMORY * 2; }
-    constexpr inline bool isR() const            { return ALGO == Algorithm::CN_R; }
+    constexpr inline bool isR() const            { return ALGO == Algorithm::CN_R || ALGO == Algorithm::CN_KV; }
     constexpr inline size_t memory() const       { static_assert(ALGO > Algorithm::INVALID && ALGO < Algorithm::RX_0, "invalid CRYPTONIGHT algorithm"); return CN_MEMORY; }
     constexpr inline uint32_t iterations() const { static_assert(ALGO > Algorithm::INVALID && ALGO < Algorithm::RX_0, "invalid CRYPTONIGHT algorithm"); return CN_ITER; }
     constexpr inline uint32_t mask() const       { return static_cast<uint32_t>(((memory() - 1) / 16) * 16); }
@@ -81,6 +81,7 @@ public:
         case Algorithm::CN_2:
         case Algorithm::CN_R:
         case Algorithm::CN_RTO:
+        case Algorithm::CN_KV:
             return CN_ITER;
 
         case Algorithm::CN_FAST:
@@ -170,6 +171,7 @@ public:
         case Algorithm::CN_RWZ:
         case Algorithm::CN_ZLS:
         case Algorithm::CN_DOUBLE:
+        case Algorithm::CN_KV:
 #       ifdef XMRIG_ALGO_CN_PICO
         case Algorithm::CN_PICO_0:
         case Algorithm::CN_PICO_TLO:

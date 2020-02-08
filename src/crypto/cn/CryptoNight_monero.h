@@ -91,7 +91,7 @@
         _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x10)), _mm_add_epi64(chunk3, _b1)); \
         _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x20)), _mm_add_epi64(chunk1, _b)); \
         _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x30)), _mm_add_epi64(chunk2, _a)); \
-        if (ALGO == Algorithm::CN_R) { \
+        if (ALGO == Algorithm::CN_R || ALGO == Algorithm::CN_KV) { \
             _c = _mm_xor_si128(_mm_xor_si128(_c, chunk3), _mm_xor_si128(chunk1, chunk2)); \
         } \
     } while (0)
@@ -141,7 +141,7 @@
         vst1q_u64((uint64_t*)((base_ptr) + ((offset) ^ 0x10)), vaddq_u64(chunk3, vreinterpretq_u64_u8(_b1))); \
         vst1q_u64((uint64_t*)((base_ptr) + ((offset) ^ 0x20)), vaddq_u64(chunk1, vreinterpretq_u64_u8(_b))); \
         vst1q_u64((uint64_t*)((base_ptr) + ((offset) ^ 0x30)), vaddq_u64(chunk2, vreinterpretq_u64_u8(_a))); \
-        if (ALGO == Algorithm::CN_R) { \
+        if (ALGO == Algorithm::CN_R || ALGO == Algorithm::CN_KV) { \
             _c = veorq_u64(veorq_u64(_c, chunk3), veorq_u64(chunk1, chunk2)); \
         } \
     } while (0)

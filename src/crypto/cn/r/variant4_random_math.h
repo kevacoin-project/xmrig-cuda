@@ -213,6 +213,8 @@ static int v4_random_math_init(struct V4_Instruction* code, const uint64_t heigh
 	memcpy(data, &tmp, sizeof(uint64_t));
 	if (ALGO == xmrig::Algorithm::CN_R)	{
 		data[20] = -38;
+	} else if (ALGO == xmrig::Algorithm::CN_KV) {
+		data[20] = 27;
 	}
 
 	// Set data_index past the last byte in data

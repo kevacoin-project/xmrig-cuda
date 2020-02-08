@@ -164,7 +164,7 @@ __global__ void cryptonight_extra_gpu_prepare(
     XOR_BLOCKS_DST(ctx_state + 4, ctx_state + 12, ctx_b);
     memcpy(d_ctx_a + thread * 4, ctx_a, 4 * 4);
 
-    if (ALGO == Algorithm::CN_R) {
+    if (ALGO == Algorithm::CN_R || ALGO == Algorithm::CN_KV) {
         memcpy(d_ctx_b + thread * 16, ctx_b, 4 * 4);
         // bx1
         XOR_BLOCKS_DST(ctx_state + 16, ctx_state + 20, ctx_b);
@@ -419,6 +419,9 @@ void cryptonight_extra_cpu_prepare(nvid_ctx *ctx, uint32_t startNonce, const xmr
             ctx->d_ctx_state, ctx->d_ctx_state2, ctx->d_ctx_a, ctx->d_ctx_b, ctx->d_ctx_key1, ctx->d_ctx_key2));
     } else if (algorithm == Algorithm::CN_R) {
         CUDA_CHECK_KERNEL(ctx->device_id, cryptonight_extra_gpu_prepare<Algorithm::CN_R> << <grid, block >> > (wsize, ctx->d_input, ctx->inputlen, startNonce,
+            ctx->d_ctx_state, ctx->d_ctx_state2, ctx->d_ctx_a, ctx->d_ctx_b, ctx->d_ctx_key1, ctx->d_ctx_key2));
+    } else if (algorithm == Algorithm::CN_KV) {
+        CUDA_CHECK_KERNEL(ctx->device_id, cryptonight_extra_gpu_prepare<Algorithm::CN_KV> << <grid, block >> > (wsize, ctx->d_input, ctx->inputlen, startNonce,
             ctx->d_ctx_state, ctx->d_ctx_state2, ctx->d_ctx_a, ctx->d_ctx_b, ctx->d_ctx_key1, ctx->d_ctx_key2));
     } else if (CnAlgo<>::base(algorithm) == Algorithm::CN_2 || algorithm == Algorithm::CN_PICO_0 || algorithm == Algorithm::CN_PICO_TLO) {
         CUDA_CHECK_KERNEL(ctx->device_id, cryptonight_extra_gpu_prepare<Algorithm::CN_2><<<grid, block >>>(wsize, ctx->d_input, ctx->inputlen, startNonce,

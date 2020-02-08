@@ -739,7 +739,7 @@ void cryptonight_core_gpu_hash(nvid_ctx* ctx, uint32_t nonce)
     }
 
     for (int i = 0; i < partcount; i++) {
-        if (ALGO == Algorithm::CN_R) {
+        if (ALGO == Algorithm::CN_R || ALGO == Algorithm::CN_KV) {
             int threads = ctx->device_blocks * ctx->device_threads;
             void* args[] = { &threads, &ctx->device_bfactor, &i, &ctx->d_long_state, &ctx->d_ctx_a, &ctx->d_ctx_b, &ctx->d_ctx_state, &nonce, &ctx->d_input };
             CU_CHECK(ctx->device_id, cuLaunchKernel(
@@ -876,7 +876,7 @@ void cryptonight_gpu_hash(nvid_ctx *ctx, const xmrig::Algorithm &algorithm, uint
     using namespace xmrig;
 
     if (algorithm.family() == Algorithm::CN) {
-        if (algorithm == Algorithm::CN_R) {
+        if (algorithm == Algorithm::CN_R || algorithm == Algorithm::CN_KV) {
             if ((ctx->algorithm != algorithm) || (ctx->kernel_height != height)) {
                 if (ctx->module) {
                     cuModuleUnload(ctx->module);
@@ -884,7 +884,7 @@ void cryptonight_gpu_hash(nvid_ctx *ctx, const xmrig::Algorithm &algorithm, uint
 
                 std::vector<char> ptx;
                 std::string lowered_name;
-                CryptonightR_get_program(ptx, lowered_name, height, ctx->device_arch[0], ctx->device_arch[1]); // FIXME
+                CryptonightR_get_program(ptx, lowered_name, algorithm, height, ctx->device_arch[0], ctx->device_arch[1]); // FIXME
 
                 CU_CHECK(ctx->device_id, cuModuleLoadDataEx(&ctx->module, ptx.data(), 0, 0, 0));
                 CU_CHECK(ctx->device_id, cuModuleGetFunction(&ctx->kernel, ctx->module, lowered_name.c_str()));
@@ -892,7 +892,7 @@ void cryptonight_gpu_hash(nvid_ctx *ctx, const xmrig::Algorithm &algorithm, uint
                 ctx->algorithm      = algorithm;
                 ctx->kernel_height  = height;
 
-                CryptonightR_get_program(ptx, lowered_name, height + 1, ctx->device_arch[0], ctx->device_arch[1], true); // FIXME
+                CryptonightR_get_program(ptx, lowered_name, algorithm, height + 1, ctx->device_arch[0], ctx->device_arch[1], true); // FIXME
             }
         }
 
@@ -943,6 +943,10 @@ void cryptonight_gpu_hash(nvid_ctx *ctx, const xmrig::Algorithm &algorithm, uint
 
         case Algorithm::CN_GPU:
             cryptonight_core_gpu_hash_gpu<Algorithm::CN_GPU>(ctx, startNonce);
+            break;
+
+        case Algorithm::CN_KV:
+            cryptonight_core_gpu_hash_gpu<Algorithm::CN_KV>(ctx, startNonce);
             break;
 
         default:

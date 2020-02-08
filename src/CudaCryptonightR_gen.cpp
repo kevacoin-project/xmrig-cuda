@@ -239,10 +239,10 @@ static void CryptonightR_build_program(
     }
 }
 
-void CryptonightR_get_program(std::vector<char>& ptx, std::string& lowered_name, uint64_t height, int arch_major, int arch_minor, bool background)
+void CryptonightR_get_program(std::vector<char>& ptx, std::string& lowered_name, const xmrig::Algorithm &algorithm, uint64_t height, int arch_major, int arch_minor, bool background)
 {
     if (background) {
-        background_exec([=]() { std::vector<char> tmp; std::string s; CryptonightR_get_program(tmp, s, height, arch_major, arch_minor, false); });
+        background_exec([=]() { std::vector<char> tmp; std::string s; CryptonightR_get_program(tmp, s, algorithm, height, arch_major, arch_minor, false); });
         return;
     }
 
@@ -259,7 +259,12 @@ void CryptonightR_get_program(std::vector<char>& ptx, std::string& lowered_name,
     }
 
     V4_Instruction code[256];
-    const int code_size = v4_random_math_init<xmrig::Algorithm::CN_R>(code, height);
+    int code_size = 0;
+    if (algorithm == xmrig::Algorithm::CN_R) {
+        code_size = v4_random_math_init<xmrig::Algorithm::CN_R>(code, height);
+    } else if (algorithm == xmrig::Algorithm::CN_KV) {
+        code_size = v4_random_math_init<xmrig::Algorithm::CN_KV>(code, height);
+    }
 
     std::string source_code(source_code_template, offset);
     source_code.append(get_code(code, code_size));
