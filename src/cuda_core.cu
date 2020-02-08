@@ -28,6 +28,7 @@
 #include <string.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include "crypto/common/Algorithm.h"
 #include "CudaCryptonightR_gen.h"
 #include "common/utils/timestamp.h"
 #include "crypto/cn/CnAlgo.h"
