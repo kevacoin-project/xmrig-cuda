@@ -217,6 +217,7 @@ public:
         case RX_LOKI:
         case RX_ARQ:
         case RX_SFX:
+	case RX_KEVA:
             return RANDOM_X;
 
         case AR2_CHUKWA:
