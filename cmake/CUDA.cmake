@@ -133,6 +133,8 @@ set(CUDA_RANDOMX_SOURCES
     src/RandomX/hash.hpp
     src/RandomX/loki/configuration.h
     src/RandomX/loki/randomx_loki.cu
+    src/RandomX/keva/configuration.h
+    src/RandomX/keva/randomx_keva.cu
     src/RandomX/monero/configuration.h
     src/RandomX/monero/randomx_monero.cu
     src/RandomX/randomx_cuda.hpp
